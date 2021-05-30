@@ -2,10 +2,10 @@ package game_test.game;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
+import javafx.geometry.Pos;
+import javafx.scene.SubScene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -18,8 +18,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import javax.sound.sampled.*;
-import java.io.File;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -56,12 +56,12 @@ public class Board extends Thread implements AnimationEffect  {
     private boolean isShowing;
     private boolean renewedBoard;
     private boolean isGameOver;
-    private boolean isGameWon;
 
-    Button reset_btn;
-    GridPane grid;
+    //Button reset_btn;
+    private SimpleButton reset_btn;
+    private GridPane grid;
 
-    //for music
+    //for Music
     Music music;
 
     //for Stopwatch stuff
@@ -70,6 +70,11 @@ public class Board extends Thread implements AnimationEffect  {
     private int seconds = 0, minutes = 0;
     private boolean isStopwatchRunning;
     private boolean stopwatchShouldStart;
+    private boolean isWon;
+
+    private Messages messages;
+    //for highscores
+    private MenuButtonsArrangement menuButtonsArrangement;
 
     public Board(int row, int col, int maxBombs, int cellButtonHeight, int cellButtonWidth){
         row_size = row;
@@ -88,14 +93,17 @@ public class Board extends Thread implements AnimationEffect  {
         minutes = 0;
         isStopwatchRunning = false;
         isGameOver = false;
-        isGameWon = false;
         stopwatchShouldStart = false;
+
+        messages = new Messages();
         setLayout();
         setLayout2(); // need to rename this to something else
 
         setFont();
         setTimeline();
+
     }
+
 
     private void setTimeline() {
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
@@ -120,7 +128,7 @@ public class Board extends Thread implements AnimationEffect  {
 
     private void setFont() {
         try{
-            timeText.setFont(Font.loadFont(new FileInputStream("game_test/game/resources/fonts/LEDBDREV.TTF"),
+            timeText.setFont(Font.loadFont(new FileInputStream("src/game_test/game/resources/fonts/LEDBDREV.TTF"),
                     40.0));
 
         }
@@ -146,15 +154,15 @@ public class Board extends Thread implements AnimationEffect  {
         vbox = new VBox();
 
         hbox = new HBox();
-        hbox.setSpacing(100);
+        setHBoxSpacing();
         hbox.getChildren().addAll(timeText, reset_btn);
-
         vbox.getChildren().addAll(hbox,grid,remains,bombs);
         isShowing = false;
         renewedBoard = true;
         vbox.setLayoutX(0);
         setLayout2();
         resetTheBoard();
+
     }
     private void setLayout2(){
 
@@ -162,7 +170,7 @@ public class Board extends Thread implements AnimationEffect  {
     }
     private void setLayout(){
         // need to change the reset button later ( will have to add a custom button)
-        reset_btn = new Button("Reset");
+        reset_btn = new SimpleButton("Reset", 100,40,25 );
         grid = new GridPane();
 
         grid.setOpacity(.70);
@@ -173,11 +181,24 @@ public class Board extends Thread implements AnimationEffect  {
         vbox = new VBox();
 
         hbox = new HBox();
-        hbox.setSpacing(100);
+        setHBoxSpacing();
         hbox.getChildren().add(timeText);
         hbox.getChildren().add(reset_btn);
 
         vbox.getChildren().addAll(hbox,grid,remains,bombs);
+
+    }
+
+    private void setHBoxSpacing(){
+        if (row_size == 10){
+            hbox.setSpacing(102);
+            return;
+        }
+        if (row_size == 12){
+            hbox.setSpacing(164);
+            return;
+        }
+        hbox.setSpacing(194);
     }
     public VBox getLayout(){
         return this.vbox;
@@ -216,6 +237,7 @@ public class Board extends Thread implements AnimationEffect  {
 
     private void addMines() {
         //set the # of bombs each time
+        maxBombs = 1;
         bombs_cnt = 0;
         while (bombs_cnt <= maxBombs){
             for (int i=0;i<row_size && bombs_cnt <= maxBombs;i++){
@@ -269,15 +291,10 @@ public class Board extends Thread implements AnimationEffect  {
                 stopwatchShouldStart = false;
                 return;
             }
-            else if (isStopwatchRunning && isGameWon) {
+            else if (isStopwatchRunning && isWon){
+                timeText.setFill(Color.GREEN);
+                stopwatchShouldStart = false;
                 timeline.pause();
-                timeText.setFill(Color.GREEN);
-                stopwatchShouldStart = true;
-                return;
-            }
-            else if (!isStopwatchRunning && isGameWon) {
-                timeText.setFill(Color.GREEN);
-                stopwatchShouldStart = true;
                 return;
             }
             if (stopwatchShouldStart){
@@ -328,23 +345,16 @@ public class Board extends Thread implements AnimationEffect  {
                                 }
                                 try {
                                     leftClick(grid_buttons[i][j], grid_info[i][j]);
-                                } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
+                                } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
                                     e.printStackTrace();
                                 }
                                 if (grid_info[i][j] == 0){
-                                    try {
-                                        traverse(i,j);
-                                    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-                                        e.printStackTrace();
-                                    }
+                                    traverse(i,j);
                                 }
                                 clickedOnACell(grid_buttons[i][j], grid_info[i][j]);
                                 if (isGameWon()){
-                                    System.out.println("YOU WON!");
-                                    isGameWon = true;
-                                    animationEffect();
                                     try {
-                                        gameWon();
+                                        gameisWon();
                                     } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
                                         e.printStackTrace();
                                     }
@@ -352,11 +362,16 @@ public class Board extends Thread implements AnimationEffect  {
                             }
                         }
                         else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)){
+                            if (!isStopwatchRunning) {
+                                stopwatchShouldStart = true;
+                                animationEffect();
+                            }
                             try {
                                 rightClick(grid_buttons[i][j]);
-                            } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
+                            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
                                 e.printStackTrace();
                             }
+
                         }
                     }
                 }
@@ -369,13 +384,13 @@ public class Board extends Thread implements AnimationEffect  {
                 cell.setIsClosed(false);
                 cell.setIsOpened(true);
                 cell.setOpenedStyle(val);
-
-                // music for clicking on a normal cell
-                music = new Music();
-                music.playMusic("click");
             }
+
+            // music for clicking on a normal cell
+            music = new Music();
+            music.playMusic("click");
         }
-        private void rightClick(CellButton cell) throws IOException, UnsupportedAudioFileException, LineUnavailableException {
+        private void rightClick(CellButton cell) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
             if (cell.isClosed() && !cell.isFlagged()){
                 cell.setIsFlagged(true);
                 cell.setClosedWithFlagStyle();
@@ -394,19 +409,51 @@ public class Board extends Thread implements AnimationEffect  {
             }
         }
     }
+    private void gameisWon() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+        // music for game won
+        music = new Music();
+        music.playMusic("win");
+
+        isWon = true;
+        animationEffect();
+        int currentScore = minutes * 60 + seconds;
+
+        HighScoreHandler highScoreHandler;
+        try {
+            highScoreHandler= new HighScoreHandler(getDifficuly(), currentScore);
+            if(highScoreHandler.isNewHighScore()){
+                messages.setLabel("Congratulations!!\n New High Score");
+            }
+            else {
+                messages.setLabel("Congratulations!!\n    You've Won");
+            }
+            messages.showPopUp();
+        }
+        catch (IOException e){
+            System.out.println("Error in saving highscore");
+        }
+
+        for (int i=0;i<row_size;i++){
+            for (int j=0;j<col_size;j++){
+                grid_buttons[i][j].setMouseTransparent(true);
+            }
+        }
+
+    }
     private boolean isGameWon() {
         return remaining_cells <= bombs_cnt;
     }
-    private void clickedOnACell(CellButton cell, int val){
+    private void clickedOnACell(CellButton cell, int val) {
         if (!cell.isMouseTransparent()) remaining_cells--;
 
         cell.setMouseTransparent(true);
         cell.setOpenedStyle(val);
         cell.setIsClosed(false);
         cell.setIsOpened(true);
+
     }
 
-    private void traverse(int row, int col) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+    private void traverse(int row, int col) {
         if (!(0 <= row && row < row_size && 0 <= col && col < col_size)) return;
         if (grid_buttons[row][col].isMouseTransparent()) return;
         if (grid_info[row][col] == -1) return;
@@ -442,22 +489,7 @@ public class Board extends Thread implements AnimationEffect  {
         }
     }
 
-    // if you win game this will stop game and show all cell
-    private void gameWon() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-        for (int i=0;i<row_size;i++){
-            for (int j=0;j<col_size;j++){
-                if (grid_info[i][j] == -1) {
-                    grid_buttons[i][j].setMouseTransparent(true);
-                }
-            }
-        }
-
-        // music for game won
-        music = new Music();
-        music.playMusic("win");
-    }
-
-    private void clickedOnABomb(CellButton cell){
+    private void clickedOnABomb(CellButton cell) {
         cell.setBombStyle();
     }
 
@@ -470,6 +502,7 @@ public class Board extends Thread implements AnimationEffect  {
             }
         }
         isGameOver = false;
+        isWon = false;
         isStopwatchRunning = false;
         timeText.setText("00:00");
         seconds = 0;
@@ -495,6 +528,95 @@ public class Board extends Thread implements AnimationEffect  {
                 }
             }
             System.out.print("\n");
+        }
+    }
+    private int getDifficuly(){
+        if (row_size == 10) return 0;
+        if (row_size == 12) return 1;
+        return 2;
+    }
+
+    private class Messages extends PopUpBox{
+        private Label label;
+
+        private int height = 40;
+        private int width = 100;
+        private SimpleButton ok;
+
+        public Messages(){
+            label = new Label();
+            addFont();
+            addButtons();
+            setupStuff();
+        }
+
+        private void setupStuff() {
+            getLayout().getChildren().addAll(label,ok);
+            label.setLayoutX(70);
+            label.setLayoutY(60);
+            label.setAlignment(Pos.CENTER);
+            ok.setLayoutX(150);
+            ok.setLayoutY(110);
+        }
+
+        public void setLabel(String text){
+            label.setText(text);
+        }
+        private void addButtons() {
+            ok = new SimpleButton("Ok",width,height,25);
+            ok.setOnAction(e->okClicked());
+        }
+
+        private void okClicked() {
+            hide();
+            menuButtonsArrangement.getPlay().setDisable(false);
+            menuButtonsArrangement.getSettings().setDisable(false);
+            menuButtonsArrangement.getHighscores().setDisable(false);
+            menuButtonsArrangement.getExit().setDisable(false);
+            menuButtonsArrangement.getHelp().setDisable(false);
+
+            setBoardButtonsDisable(false);
+            reset_btn.setDisable(false);
+        }
+
+        public void showPopUp(){
+            show();
+            menuButtonsArrangement.getPlay().setDisable(true);
+            menuButtonsArrangement.getSettings().setDisable(true);
+            menuButtonsArrangement.getHighscores().setDisable(true);
+            menuButtonsArrangement.getExit().setDisable(true);
+            menuButtonsArrangement.getHelp().setDisable(true);
+
+            setBoardButtonsDisable(true);
+            reset_btn.setDisable(true);
+
+        }
+        private void addFont() {
+            try{
+                label.setFont(Font.loadFont(new FileInputStream("src/game_test/game/resources/fonts/ghostclan.ttf"),
+                        25.0));
+
+            }
+            catch(Exception e){
+                System.out.println("FONT NOT FOUND");
+                label.setFont(Font.font("Tahoma", 25.0));
+            }
+        }
+    }
+
+    public SubScene getMessagesPopUp(){
+        return messages.getSubScene();
+    }
+
+    public void setMenuButtonsArrangement(MenuButtonsArrangement menuButtonsArrangement){
+        this.menuButtonsArrangement = menuButtonsArrangement;
+    }
+
+    private void setBoardButtonsDisable(boolean val){
+        for(int i=0;i<row_size;i++){
+            for (int j=0;j<col_size;j++){
+                grid_buttons[i][j].setDisable(val);
+            }
         }
     }
 }
