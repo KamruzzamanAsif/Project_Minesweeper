@@ -27,10 +27,10 @@ public class MenuButton extends Button {
         setText(text);
 
         BACKGROUND_SIZE = "-fx-background-size: 190px 45px;";
-        BUTTON_DEFAULT_STYLE ="-fx-background-image: url('game_test/game/resources/menu_images/grey_button_normal.png');";
-        BUTTON_MOUSE_ENTERED_STYLE = "-fx-background-image: url('game_test/game/resources/menu_images/grey_button_mouse_entered.png');" ;
-        BUTTON_MOUSE_PRESSED_STYLE = "-fx-background-image: url('game_test/game/resources/menu_images/grey_button_mouse_pressed.png');" ;
-        BUTTON_RELEASED_STYLE = "-fx-background-image: url('game_test/game/resources/menu_images/grey_button_released.png');";
+        BUTTON_DEFAULT_STYLE ="-fx-background-image: url('/game_test/game/resources/menu_images/grey_button_normal.png');";
+        BUTTON_MOUSE_ENTERED_STYLE = "-fx-background-image: url('/game_test/game/resources/menu_images/grey_button_mouse_entered.png');" ;
+        BUTTON_MOUSE_PRESSED_STYLE = "-fx-background-image: url('/game_test/game/resources/menu_images/grey_button_mouse_pressed.png');" ;
+        BUTTON_RELEASED_STYLE = "-fx-background-image: url('/game_test/game/resources/menu_images/grey_button_released.png');";
 
         setDefaultStyle();
         setListeners();
@@ -53,8 +53,20 @@ public class MenuButton extends Button {
     }
     private void setButtonFont(){
         try{
-            setFont(Font.loadFont(new FileInputStream("game_test/game/resources/fonts/ThaleahFat.ttf"),
+            setFont(Font.loadFont(new FileInputStream("src/game_test/game/resources/fonts/ThaleahFat.ttf"),
                      28.0));
+
+        }
+        catch(Exception e){
+            System.out.println("FONT NOT FOUND");
+            setFont(Font.font("Tahoma", 25.0));
+        }
+
+    }
+    protected void setButtonFont(int size){
+        try{
+            setFont(Font.loadFont(new FileInputStream("src/game_test/game/resources/fonts/ThaleahFat.ttf"),
+                    size));
 
         }
         catch(Exception e){

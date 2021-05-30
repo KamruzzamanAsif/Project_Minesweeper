@@ -1,32 +1,56 @@
 package game_test.game;
 
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.text.*;
+import javafx.scene.text.Font;
 
+import java.io.FileInputStream;
 
 public class HelpSubScene {
-    AnchorPane layout;
-    StackPane stackPane;
-    Text text;
-    GameDisplay gameDisplay;
+    private AnchorPane layout;
+    private Label label;
 
     public HelpSubScene(){
-        text = new Text();
-        text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 50));
-        text.setWrappingWidth(200);
-        text.setTextAlignment(TextAlignment.JUSTIFY);
-        text.setText("The quick brown fox jumps over the lazy dog");
-
-        stackPane = new StackPane(text);
-
-        layout.getChildren().add(stackPane);
+        layout = new AnchorPane();
+        label = new Label();
+        layout.getChildren().add(label);
+        layout.setPrefSize(400,450);
+        addFont();
+        setLabelLayout();
+        addText();
     }
 
-    public AnchorPane getLayout(){
+    private void setLabelLayout() {
+        label.setLayoutX(-70);
+    }
+
+    private void addText() {
+        label.setText("" +
+                " Each cell is empty, has \n a number,"
+                + " or has a bomb.\n Mouse-LeftClick reveals\n " +
+                "what's in the cell. A\n numbered cell means " +
+                "how \n many bombs are in all 8 \n directions. " +
+                "Mouse-Right \n Click flags a closed cell.\n " +
+                "Clicking on a bomb-cell is\n game over. " +
+                "Uncover all \n cells without the bombs\n to win.\n"
+        );
+        label.setAlignment(Pos.BASELINE_CENTER);
+    }
+
+    private void addFont() {
+        try{
+            label.setFont(Font.loadFont(new FileInputStream("src/game_test/game/resources/fonts/ghostclan.ttf"),
+                    25));
+
+        }
+        catch(Exception e){
+            System.out.println("FONT NOT FOUND");
+            label.setFont(Font.font("Tahoma", 18));
+        }
+    }
+
+    public AnchorPane getLayout() {
         return layout;
-    }
-    public void setGameDisplay(GameDisplay gameDisplay){
-        this.gameDisplay = gameDisplay;
     }
 }

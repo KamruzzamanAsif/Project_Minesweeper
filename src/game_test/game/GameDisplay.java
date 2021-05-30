@@ -31,9 +31,8 @@ public class GameDisplay implements AnimationEffect  {
     private SubScene gameScene;
 
     private Stage gameStage;
-    Board board;
-    boolean isShowing;
-
+    private Board board;
+    private boolean isShowing;
     public GameDisplay(int difficulty){
         gameLayout = new AnchorPane();
         gameScene = new SubScene (gameLayout,450, HEIGHT);

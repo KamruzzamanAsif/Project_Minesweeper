@@ -49,7 +49,7 @@ public class SettingsSubScene {
 
         //save button for changing the difficulty
 
-        save = new SettingsSubsceneButtons("game_test/game/resources/settings_subscene_images/grey_button15.png",
+        save = new SettingsSubsceneButtons("/game_test/game/resources/settings_subscene_images/grey_button15.png",
                 "game_test/game/resources/settings_subscene_images/grey_button14.png", 100, 49);
         save.setMouseButtonPressedStyle();
 
@@ -91,7 +91,7 @@ public class SettingsSubScene {
         }
         private void setLabelFont(){
             try{
-                setFont(Font.loadFont(new FileInputStream("game_test/game/resources/fonts/ghostclan.ttf"),
+                setFont(Font.loadFont(new FileInputStream("src/game_test/game/resources/fonts/ghostclan.ttf"),
                         25.0));
 
             }
@@ -103,7 +103,7 @@ public class SettingsSubScene {
         }
         private void setLabelFont(int size){
             try{
-                setFont(Font.loadFont(new FileInputStream("game_test/game/resources/fonts/ghostclan.ttf"),
+                setFont(Font.loadFont(new FileInputStream("src/game_test/game/resources/fonts/ghostclan.ttf"),
                         size));
 
             }

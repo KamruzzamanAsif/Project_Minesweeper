@@ -8,8 +8,8 @@ import javafx.util.Duration;
 
 public class Subscenes extends SubScene implements AnimationEffect{
 
-    private final String FONT_PATH = "game_test/game/resources/fonts/ghostclan.ttf";
-    private final String BACKGROUND_IMAGE_PATH = "game_test/game/resources/subscene_images/glassPanel.png";
+    private final String FONT_PATH = "src/game_test/game/resources/fonts/ghostclan.ttf";
+    private final String BACKGROUND_IMAGE_PATH = "/game_test/game/resources/subscene_images/glassPanel.png";
 
     private static final int WIDTH = 450;
     private static final int HEIGHT = 500;
@@ -37,7 +37,6 @@ public class Subscenes extends SubScene implements AnimationEffect{
         layout.setLayoutY(100);
         layout.setLayoutX(100);
     }
-
     @Override
     public void animationEffect() {
         TranslateTransition translateTransition = new TranslateTransition();

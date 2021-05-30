@@ -18,6 +18,7 @@ public class MainDisplay {
     private GameDisplay gameDisplay;
 
 
+
     static private MainMenu mainMenu;
 
     public MainDisplay(){
@@ -29,7 +30,7 @@ public class MainDisplay {
         mainDisplayStage.setResizable(false);
         mainDisplayScene.setFill(Color.TRANSPARENT);
         //css diya kono karone thik moto kaam kore na
-        //mainDisplayScene.getStylesheets().add("game_test/game/game_test.game.resources/CSS/transparent_background.css");
+        //mainDisplayScene.getStylesheets().add("game_test/game/resources/CSS/transparent_background.css");
 
         addBackGround();
         addMainMenu();
@@ -41,8 +42,16 @@ public class MainDisplay {
         addSettingsDisplay();
         addHelpDisplay();
         addHighscoresDisplay();
+        addExitPopUp();
+        addMessagesPopUp();
     }
 
+    private static void addExitPopUp() {
+        mainDisplayLayout.getChildren().add(mainMenu.getExitPopUp());
+    }
+    private static void addMessagesPopUp(){
+        mainDisplayLayout.getChildren().add(mainMenu.getBoard().getMessagesPopUp());
+    }
     private static void addHighscoresDisplay() {
         mainDisplayLayout.getChildren().add(mainMenu.getHighscoresDisplaySubScene());
     }
@@ -56,7 +65,7 @@ public class MainDisplay {
     }
 
     private static void addBackGround() {
-        Image backgroundImage = new Image("game_test/game/resources/menu_images/backgroundEmpty.png");
+        Image backgroundImage = new Image("/game_test/game/resources/menu_images/backgroundEmpty.png");
         BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.CENTER,null);
         mainDisplayLayout.setBackground(new Background(background));
     }

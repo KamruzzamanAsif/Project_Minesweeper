@@ -10,8 +10,8 @@ import java.io.FileInputStream;
 
 
 public class SettingsSubsceneButtons extends MenuButton{
-    private static final String NORMAL_PATH = "game_test/game/resources/settings_subscene_images/grey_circle.png";
-    private static final String PRESSED_PATH = "game_test/game/resources/settings_subscene_images/blue_circle.png";
+    private static final String NORMAL_PATH = "/game_test/game/resources/settings_subscene_images/grey_circle.png";
+    private static final String PRESSED_PATH = "/game_test/game/resources/settings_subscene_images/blue_circle.png";
     private static final int BUTTON_WIDTH = 36;
     private static final int BUTTON_HEIGHT = 36;
 
@@ -33,7 +33,7 @@ public class SettingsSubsceneButtons extends MenuButton{
     }
     private void setButtonFont(){
         try{
-            setFont(Font.loadFont(new FileInputStream("game_test/game/resources/fonts/ThaleahFat.ttf"),
+            setFont(Font.loadFont(new FileInputStream("src/game_test/game/resources/fonts/ThaleahFat.ttf"),
                     20));
 
         }

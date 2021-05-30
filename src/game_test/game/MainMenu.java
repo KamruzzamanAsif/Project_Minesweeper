@@ -1,8 +1,16 @@
 package game_test.game;
 
+import javafx.geometry.Pos;
 import javafx.scene.SubScene;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
+import java.io.FileInputStream;
+
 
 public class MainMenu {
     // main menu will occupy the left side of maindisplay, this is not a subscene.
@@ -14,17 +22,20 @@ public class MainMenu {
     private AnchorPane mainMenuLayout = new AnchorPane();
     private Stage mainDisplayStage;
 
-    MenuButtonsArrangement menuButtonsArrangement;
-    GameDisplay gameDisplay;
-    Board board;
+    private MenuButtonsArrangement menuButtonsArrangement;
+    private GameDisplay gameDisplay;
+    private Board board;
 
-    Subscenes helpDisplay;
-    Subscenes settingsDisplay;
-    Subscenes highscoresDisplay;
-    SubScene gameScene;
+    private Subscenes helpDisplay;
+    private Subscenes settingsDisplay;
+    private Subscenes highscoresDisplay;
+    private SubScene gameScene;
 
-    SettingsSubScene settings;
-    HelpSubScene help;
+    private SettingsSubScene settings;
+    private HelpSubScene help;
+    private HighScoresSubScene highscores;
+    //PopUps
+    private ExitPopUp exitPopUp;
 
     public MainMenu(){
         menuButtonsArrangement = new MenuButtonsArrangement();
@@ -36,7 +47,18 @@ public class MainMenu {
         initGameDisplay();
         setBoard();
         addSubScenes();
+        addExitPopUp();
         setGameScene();
+        setButtonArrangementInBoard();
+
+    }
+
+    private void setButtonArrangementInBoard() {
+        board.setMenuButtonsArrangement(menuButtonsArrangement);
+    }
+
+    private void addExitPopUp() {
+        exitPopUp = new ExitPopUp();
     }
 
     private void setGameScene(){
@@ -49,7 +71,9 @@ public class MainMenu {
     }
 
     private void addHighscoresDisplaySubscene() {
+        highscores = new HighScoresSubScene();
         highscoresDisplay = new Subscenes();
+        highscoresDisplay.addLayout(highscores.getLayout());
     }
 
     private void addSettingsDisplaySubScene() {
@@ -60,14 +84,16 @@ public class MainMenu {
     }
 
     private void addHelpDisplaySubScene() {
-        //help = new HelpSubScene();
+        help = new HelpSubScene();
         helpDisplay = new Subscenes();
-        //helpDisplay.addLayout(help.getLayout());
-        //help.setGameDisplay(gameDisplay);
+        helpDisplay.addLayout(help.getLayout());
     }
     public void setBoard(){
 
         this.board = gameDisplay.getBoard() ;
+    }
+    public Board getBoard(){
+        return board;
     }
     public AnchorPane getMainMenuLayout(){
         return mainMenuLayout;
@@ -152,6 +178,7 @@ public class MainMenu {
             helpDisplay.animationEffect();
         }
         if (!highscoresDisplay.getIsShowing()){
+            highscores.updateTimes();
             highscoresDisplay.animationEffect();
         }
         if(settingsDisplay.getIsShowing()){
@@ -176,8 +203,8 @@ public class MainMenu {
         if(settingsDisplay.getIsShowing()){
             settingsDisplay.animationEffect();
         }
-        mainDisplayStage.close();
-
+        //mainDisplayStage.close();
+        exitPopUp.showPopUp();
     }
     private void initGameDisplay() {
         int difficulty = 0;
@@ -194,13 +221,94 @@ public class MainMenu {
         return this.settingsDisplay;
     }
     public Subscenes getHelpDisplaySubScene(){
-        return this.helpDisplay;
+        return helpDisplay;
     }
     public Subscenes getHighscoresDisplaySubScene(){
         return highscoresDisplay;
     }
-
+    public SubScene getExitPopUp(){
+        return exitPopUp.getSubScene();
+    }
     public void setMainDisplayStage(Stage mainDisplayStage) {
         this.mainDisplayStage = mainDisplayStage;
+    }
+
+    private class ExitPopUp extends PopUpBox{
+        private Label label;
+        private VBox vbox;
+        private HBox hbox;
+
+        private int height = 40;
+        private int width = 100;
+        SimpleButton yes, no;
+
+        public  ExitPopUp(){
+            label = new Label("Do you wish to exit?");
+            vbox = new VBox(40);
+
+            addFont();
+            addButtons();
+            setupStuff();
+        }
+
+        private void setupStuff() {
+            getLayout().getChildren().addAll(label,hbox);
+            label.setLayoutX(50);
+            label.setLayoutY(60);
+
+            hbox.setLayoutX(90);
+            hbox.setLayoutY(110);
+        }
+
+        private void addFont() {
+            try{
+                label.setFont(Font.loadFont(new FileInputStream("src/game_test/game/resources/fonts/ghostclan.ttf"),
+                        25.0));
+
+            }
+            catch(Exception e){
+                System.out.println("FONT NOT FOUND");
+                label.setFont(Font.font("Tahoma", 25.0));
+            }
+        }
+
+
+
+        private void addButtons() {
+            yes = new SimpleButton("Yes", width, height, 25);
+            yes.setOnAction(e->yesClicked());
+            no = new SimpleButton("No",width,height,25 );
+            no.setOnAction(e->noClicked());
+            hbox = new HBox(20);
+            hbox.setLayoutX(90);
+            hbox.getChildren().addAll(yes,no);
+
+        }
+
+        private void noClicked() {
+            hide();
+            menuButtonsArrangement.getPlay().setDisable(false);
+            menuButtonsArrangement.getSettings().setDisable(false);
+            menuButtonsArrangement.getHighscores().setDisable(false);
+            menuButtonsArrangement.getExit().setDisable(false);
+            menuButtonsArrangement.getHelp().setDisable(false);
+            menuButtonsArrangement.getExit().setDefaultStyle();
+        }
+
+        private void yesClicked() {
+            mainDisplayStage.close();
+        }
+
+        public void showPopUp(){
+            show();
+            menuButtonsArrangement.getPlay().setDisable(true);
+            menuButtonsArrangement.getSettings().setDisable(true);
+            menuButtonsArrangement.getHighscores().setDisable(true);
+            menuButtonsArrangement.getExit().setDisable(true);
+            menuButtonsArrangement.getHelp().setDisable(true);
+
+
+        }
+
     }
 }
