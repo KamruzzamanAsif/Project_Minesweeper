@@ -1,0 +1,7 @@
+.root{
+    -fx-background-image: url("/game_test/game/resources/popup_images/glassPanel_corners.png");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 600 400;
+    -fx-background-position: center center;
+    -fx-background-color: transparent;
+}
