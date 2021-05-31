@@ -12,8 +12,8 @@ import java.io.FileInputStream;
 public class SettingsSubsceneButtons extends MenuButton{
     private static final String NORMAL_PATH = "/game_test/game/resources/settings_subscene_images/grey_circle.png";
     private static final String PRESSED_PATH = "/game_test/game/resources/settings_subscene_images/blue_circle.png";
-    private static final int BUTTON_WIDTH = 36;
-    private static final int BUTTON_HEIGHT = 36;
+    private static final int BUTTON_WIDTH = 25;
+    private static final int BUTTON_HEIGHT = 25;
 
     public SettingsSubsceneButtons(){
         super(NORMAL_PATH, PRESSED_PATH);
@@ -39,7 +39,7 @@ public class SettingsSubsceneButtons extends MenuButton{
         }
         catch(Exception e){
             System.out.println("FONT NOT FOUND");
-            setFont(Font.font("Tahoma", 25.0));
+            setFont(Font.font("Tahoma", 20.0));
         }
     }
     @Override

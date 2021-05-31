@@ -1,7 +1,6 @@
 package game_test.game;
 
 import javafx.scene.control.Label;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -14,29 +13,44 @@ import java.io.FileInputStream;
 public class SettingsSubScene {
     AnchorPane layout;
     VBox vbox;
-    HBox easy,medium,hard;
+    HBox easy,medium,hard; // for game difficulty
+    HBox on, off; // for music play
     private static final int hboxSpacing = 50;
     SettingsSubsceneButtons easyDifficultyButton, mediumDifficultyButton, hardDifficultyButton;
-    SettingsLabel easyLabel, mediumLabel, hardLabel, head;
+    SettingsSubsceneButtons onButton, offButton; // music on off button
+    SettingsLabel easyLabel, mediumLabel, hardLabel, head1;
+    SettingsLabel onLabel, offLabel, head2; // music on off label
     SettingsSubsceneButtons save;
     int temp_difficulty;
     int difficulty;
+    boolean musicPlay;
 
     GameDisplay gameDisplay;
+    Music music;
 
     public SettingsSubScene(){
         layout = new AnchorPane();
+
         easyDifficultyButton = new SettingsSubsceneButtons();
         mediumDifficultyButton = new SettingsSubsceneButtons();
         hardDifficultyButton = new SettingsSubsceneButtons();
 
+        onButton = new SettingsSubsceneButtons();
+        offButton = new SettingsSubsceneButtons();
+
+        // game mode labels
         easyLabel = new SettingsLabel("Easy");
         mediumLabel = new SettingsLabel("Medium");
         hardLabel = new SettingsLabel("Hard");
-        head = new SettingsLabel("Change Difficulty",30);
+        head1 = new SettingsLabel("Game Mode",30);
+
+        // music labels
+        onLabel = new SettingsLabel("ON");
+        offLabel = new SettingsLabel("OFF");
+        head2 = new SettingsLabel("Game Music", 30);
 
         vbox = new VBox();
-        vbox.setSpacing(20);
+        vbox.setSpacing(15);
 
         easy = new HBox();
         easy.setSpacing(hboxSpacing);
@@ -47,8 +61,13 @@ public class SettingsSubScene {
         hard = new HBox();
         hard.setSpacing(hboxSpacing);
 
-        //save button for changing the difficulty
+        on = new HBox();
+        on.setSpacing(hboxSpacing);
 
+        off = new HBox();
+        off.setSpacing(hboxSpacing);
+
+        //save button for changing the difficulty
         save = new SettingsSubsceneButtons("/game_test/game/resources/settings_subscene_images/grey_button15.png",
                 "game_test/game/resources/settings_subscene_images/grey_button14.png", 100, 49);
         save.setMouseButtonPressedStyle();
@@ -58,6 +77,7 @@ public class SettingsSubScene {
         addHBox();
         addVBox();
         easyDifficultyButton.setMouseButtonPressedStyle();
+        onButton.setMouseButtonPressedStyle();
         setListeners();
         temp_difficulty = 0;
         difficulty = 0;
@@ -68,7 +88,7 @@ public class SettingsSubScene {
     }
     private void addVBox() {
         layout.getChildren().add(vbox);
-        vbox.setLayoutY(100);
+        vbox.setLayoutY(50);
         vbox.setLayoutX(-15);
     }
 
@@ -76,14 +96,14 @@ public class SettingsSubScene {
         public SettingsLabel(String text){
             super(text);
             setMinHeight(easyDifficultyButton.getPrefHeight());
-            setMinWidth(200);
+            setMinWidth(100);
             setTextAlignment(TextAlignment.CENTER);
             setLabelFont();
         }
         public SettingsLabel(String text, int size){
             super(text);
             setMinHeight(easyDifficultyButton.getPrefHeight());
-            setMinWidth(200);
+            setMinWidth(100);
             setTextAlignment(TextAlignment.CENTER);
             setLabelFont(size);
             setTextFill(Color.INDIGO);
@@ -92,12 +112,12 @@ public class SettingsSubScene {
         private void setLabelFont(){
             try{
                 setFont(Font.loadFont(new FileInputStream("src/game_test/game/resources/fonts/ghostclan.ttf"),
-                        25.0));
+                        20.0));
 
             }
             catch(Exception e){
                 System.out.println("FONT NOT FOUND");
-                setFont(Font.font("Tahoma", 25.0));
+                setFont(Font.font("Tahoma", 20.0));
             }
 
         }
@@ -109,7 +129,7 @@ public class SettingsSubScene {
             }
             catch(Exception e){
                 System.out.println("FONT NOT FOUND");
-                setFont(Font.font("Tahoma", 25.0));
+                setFont(Font.font("Tahoma", 20.0));
             }
 
         }
@@ -117,11 +137,17 @@ public class SettingsSubScene {
     }
 
     private void addLabels() {
-        layout.getChildren().add(head);
-        head.setLayoutX(-25);
+        layout.getChildren().add(head1);
+        head1.setLayoutX(-5);
+        head1.setLayoutY(-5);
         easy.getChildren().add(easyLabel);
         medium.getChildren().add(mediumLabel);
         hard.getChildren().add(hardLabel);
+
+        //layout.getChildren().add(head2);
+        //head2.setLayoutX(-15);
+        on.getChildren().add(onLabel);
+        off.getChildren().add(offLabel);
 
         save.setText("save");
     }
@@ -130,6 +156,10 @@ public class SettingsSubScene {
         easy.getChildren().add(easyDifficultyButton);
         medium.getChildren().add(mediumDifficultyButton);
         hard.getChildren().add(hardDifficultyButton);
+
+        on.getChildren().add(onButton);
+        off.getChildren().add(offButton);
+
         layout.getChildren().add(save);
 
         AnchorPane.setTopAnchor(save, 300.0);
@@ -137,7 +167,7 @@ public class SettingsSubScene {
     }
 
     private void addHBox(){
-        vbox.getChildren().addAll(easy,medium,hard);
+        vbox.getChildren().addAll(easy,medium,hard,head2,on,off);
     }
 
     public AnchorPane getLayout(){
@@ -148,6 +178,10 @@ public class SettingsSubScene {
         easyDifficultyButton.setOnAction(e->easyDifficultyButtonPressed());
         mediumDifficultyButton.setOnAction(e->mediumDifficultyButtonPressed());
         hardDifficultyButton.setOnAction(e->hardDifficultyButtonPressed());
+
+        onButton.setOnAction(e->onButtonPressed());
+        offButton.setOnAction(e->offButtonPressed());
+
         save.setOnAction(e->saveButtonPressed());
     }
 
@@ -155,11 +189,14 @@ public class SettingsSubScene {
         if (save.getIsPressed()) return;
 
         difficulty = temp_difficulty;
+
         save.setIsPressed(true);
         save.setMouseButtonPressedStyle();
 
         gameDisplay.newDifficulty(difficulty);
 
+        music = new Music();
+        music.MusicPlay(musicPlay);
     }
 
     private void hardDifficultyButtonPressed() {
@@ -191,6 +228,29 @@ public class SettingsSubScene {
             save.setDefaultStyle();
         }
     }
+
+    private void onButtonPressed(){
+        musicPlay = true;
+        offButton.setDefaultStyle();
+
+        if (!save.isPressed()){
+            save.setDefaultStyle();
+        }
+    }
+
+    private void offButtonPressed(){
+        musicPlay = false;
+        onButton.setDefaultStyle();
+
+        if (!save.isPressed()){
+            save.setDefaultStyle();
+        }
+    }
+
+//    public boolean shouldMusicPlay(){
+//        return this.musicPlay;
+//    }
+
     public void setHiddenStyle(){
         if (difficulty == 0){
             easyDifficultyButton.setMouseButtonPressedStyle();

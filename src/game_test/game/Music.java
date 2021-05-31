@@ -9,6 +9,13 @@ public class Music {
     AudioInputStream audioStream;
     Clip clip;
 
+    static boolean shouldMusicPlay = true;
+
+    public void MusicPlay(boolean musicPlay){
+        shouldMusicPlay = musicPlay;
+        System.out.println(shouldMusicPlay);
+    }
+
     public void playMusic(String str) throws IOException, UnsupportedAudioFileException, LineUnavailableException {
         switch (str) {
             case "click":
@@ -31,6 +38,8 @@ public class Music {
         audioStream = AudioSystem.getAudioInputStream(file);
         clip = AudioSystem.getClip();
         clip.open(audioStream);
-        clip.start();
+        if(shouldMusicPlay)
+            clip.start();
+
     }
 }
