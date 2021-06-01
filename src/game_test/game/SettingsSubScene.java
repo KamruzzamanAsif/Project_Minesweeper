@@ -1,5 +1,6 @@
 package game_test.game;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -15,7 +16,7 @@ public class SettingsSubScene {
     VBox vbox;
     HBox easy,medium,hard; // for game difficulty
     HBox on, off; // for music play
-    private static final int hboxSpacing = 50;
+    private static final int hboxSpacing = 150;
     SettingsSubsceneButtons easyDifficultyButton, mediumDifficultyButton, hardDifficultyButton;
     SettingsSubsceneButtons onButton, offButton; // music on off button
     SettingsLabel easyLabel, mediumLabel, hardLabel, head1;
@@ -42,12 +43,12 @@ public class SettingsSubScene {
         easyLabel = new SettingsLabel("Easy");
         mediumLabel = new SettingsLabel("Medium");
         hardLabel = new SettingsLabel("Hard");
-        head1 = new SettingsLabel("Game Mode",30);
+        head1 = new SettingsLabel("   Game Mode",30);
 
         // music labels
         onLabel = new SettingsLabel("ON");
         offLabel = new SettingsLabel("OFF");
-        head2 = new SettingsLabel("Game Music", 30);
+        head2 = new SettingsLabel("   Game Music", 30);
 
         vbox = new VBox();
         vbox.setSpacing(15);
@@ -88,7 +89,7 @@ public class SettingsSubScene {
     }
     private void addVBox() {
         layout.getChildren().add(vbox);
-        vbox.setLayoutY(50);
+        vbox.setLayoutY(15);
         vbox.setLayoutX(-15);
     }
 
@@ -137,15 +138,16 @@ public class SettingsSubScene {
     }
 
     private void addLabels() {
-        layout.getChildren().add(head1);
         head1.setLayoutX(-5);
         head1.setLayoutY(-5);
+        head1.setAlignment(Pos.CENTER);
         easy.getChildren().add(easyLabel);
         medium.getChildren().add(mediumLabel);
         hard.getChildren().add(hardLabel);
 
-        //layout.getChildren().add(head2);
-        //head2.setLayoutX(-15);
+        head2.setLayoutX(-5);
+        head2.setLayoutY(-5);
+        head2.setAlignment(Pos.CENTER);
         on.getChildren().add(onLabel);
         off.getChildren().add(offLabel);
 
@@ -167,7 +169,7 @@ public class SettingsSubScene {
     }
 
     private void addHBox(){
-        vbox.getChildren().addAll(easy,medium,hard,head2,on,off);
+        vbox.getChildren().addAll(head1,easy,medium,hard,head2,on,off);
     }
 
     public AnchorPane getLayout(){
@@ -247,9 +249,6 @@ public class SettingsSubScene {
         }
     }
 
-//    public boolean shouldMusicPlay(){
-//        return this.musicPlay;
-//    }
 
     public void setHiddenStyle(){
         if (difficulty == 0){
