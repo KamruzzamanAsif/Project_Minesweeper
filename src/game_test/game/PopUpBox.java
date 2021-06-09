@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public abstract class PopUpBox {
-    private SubScene subScene;
+    public SubScene subScene;
     private AnchorPane layout;
     private int startingX = 1000;
     private int startingY = 1000;
@@ -19,14 +19,22 @@ public abstract class PopUpBox {
 
     private boolean isShowing;
 
+    public PopUpBox(int width,int height){
+        this.width = width;
+        this.height = height;
+        addBasic();
+    }
     public PopUpBox(){
+        addBasic();
+    }
+
+    private void addBasic(){
         layout = new AnchorPane();
         subScene = new SubScene(layout,960,720);
         subScene.setLayoutY(startingY);
         subScene.setLayoutX(startingX);
         isShowing = false;
         addBackground();
-
     }
 
     protected void addBackground(){
@@ -40,8 +48,8 @@ public abstract class PopUpBox {
         return subScene;
     }
     public void show(){
-        subScene.setLayoutX(320);
-        subScene.setLayoutY(240);
+        subScene.setLayoutX(280);
+        subScene.setLayoutY(260);
     }
     public void hide(){
         subScene.setLayoutY(startingY);

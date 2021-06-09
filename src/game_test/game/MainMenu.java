@@ -1,6 +1,6 @@
 package game_test.game;
 
-import javafx.geometry.Pos;
+import game_test.game.high_score.*;
 import javafx.scene.SubScene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
@@ -29,13 +29,21 @@ public class MainMenu {
     private Subscenes helpDisplay;
     private Subscenes settingsDisplay;
     private Subscenes highscoresDisplay;
+    private Subscenes easyScoreDisplay;
+    private Subscenes mediumScoreDisplay;
+    private Subscenes hardScoreDisplay;
     private SubScene gameScene;
 
     private SettingsSubScene settings;
     private HelpSubScene help;
-    private HighScoresSubScene highscores;
-    //PopUps
+    private HighScoreControl highscores;
+    private HighScoreHandler easyScore;
+    private HighScoreHandler mediumScore;
+    private HighScoreHandler hardScore;
     private ExitPopUp exitPopUp;
+
+    //back button is for the highscore subscene
+    private SimpleButton back;
 
     public MainMenu(){
         menuButtonsArrangement = new MenuButtonsArrangement();
@@ -68,12 +76,40 @@ public class MainMenu {
         addSettingsDisplaySubScene();
         addHelpDisplaySubScene();
         addHighscoresDisplaySubscene();
+        addEasyScoreDisplaySubscene();
+        addMediumScoreDisplaySubscene();
+        addHardScoreDisplaySubscene();
     }
 
-    private void addHighscoresDisplaySubscene() {
-        highscores = new HighScoresSubScene();
+    public void addHighscoresDisplaySubscene() {
+        highscores = new HighScoreControl();
         highscoresDisplay = new Subscenes();
-        highscoresDisplay.addLayout(highscores.getLayout());
+        highscoresDisplay.addLayout(highscores.getLayoutHighscore());
+        back = new SimpleButton("Back",80,40,18);
+        back.setOnAction(e->backButtonClicked());
+    }
+
+    private void backButtonClicked() {
+        highScoresButtonClicked();
+    }
+
+    private void addEasyScoreDisplaySubscene(){
+        easyScore = new HighScoreHandler("Easy");
+        easyScoreDisplay = new Subscenes();
+        easyScoreDisplay.addLayout(easyScore.getLayout());
+        easyScore.setBackButton(back);
+    }
+    private void addMediumScoreDisplaySubscene(){
+        mediumScore = new HighScoreHandler("Medium");
+        mediumScoreDisplay = new Subscenes();
+        mediumScoreDisplay.addLayout(mediumScore.getLayout());
+        mediumScore.setBackButton(back);
+    }
+    private void addHardScoreDisplaySubscene(){
+        hardScore = new HighScoreHandler("Hard");
+        hardScoreDisplay = new Subscenes();
+        hardScoreDisplay.addLayout(hardScore.getLayout());
+        hardScore.setBackButton(back);
     }
 
     private void addSettingsDisplaySubScene() {
@@ -125,6 +161,15 @@ public class MainMenu {
             settingsDisplay.animationEffect();
             settings.setHiddenStyle();
         }
+        if(easyScoreDisplay.getIsShowing()){
+            easyScoreDisplay.animationEffect();
+        }
+        if(mediumScoreDisplay.getIsShowing()){
+            mediumScoreDisplay.animationEffect();
+        }
+        if(hardScoreDisplay.getIsShowing()){
+            hardScoreDisplay.animationEffect();
+        }
     }
 
     private void settingsButtonClicked() {
@@ -143,6 +188,15 @@ public class MainMenu {
         }
         if(!settingsDisplay.getIsShowing()){
             settingsDisplay.animationEffect();
+        }
+        if(easyScoreDisplay.getIsShowing()){
+            easyScoreDisplay.animationEffect();
+        }
+        if(mediumScoreDisplay.getIsShowing()){
+            mediumScoreDisplay.animationEffect();
+        }
+        if(hardScoreDisplay.getIsShowing()){
+            hardScoreDisplay.animationEffect();
         }
     }
     private void helpButtonClicked() {
@@ -164,6 +218,15 @@ public class MainMenu {
             settingsDisplay.animationEffect();
             settings.setHiddenStyle();
         }
+        if(easyScoreDisplay.getIsShowing()){
+            easyScoreDisplay.animationEffect();
+        }
+        if(mediumScoreDisplay.getIsShowing()){
+            mediumScoreDisplay.animationEffect();
+        }
+        if(hardScoreDisplay.getIsShowing()){
+            hardScoreDisplay.animationEffect();
+        }
     }
     private void highScoresButtonClicked() {
         menuButtonsArrangement.getPlay().setDefaultStyle();
@@ -178,13 +241,120 @@ public class MainMenu {
             helpDisplay.animationEffect();
         }
         if (!highscoresDisplay.getIsShowing()){
-            highscores.updateTimes();
             highscoresDisplay.animationEffect();
         }
         if(settingsDisplay.getIsShowing()){
             settingsDisplay.animationEffect();
             settings.setHiddenStyle();
         }
+        if(easyScoreDisplay.getIsShowing()){
+            easyScoreDisplay.animationEffect();
+        }
+        if(mediumScoreDisplay.getIsShowing()){
+            mediumScoreDisplay.animationEffect();
+        }
+        if(hardScoreDisplay.getIsShowing()){
+            hardScoreDisplay.animationEffect();
+        }
+        highscores.getHighScoreButtonArragement().setDefault();
+    }
+    private void easyScoresButtonClicked() {
+        menuButtonsArrangement.getPlay().setDefaultStyle();
+        menuButtonsArrangement.getSettings().setDefaultStyle();
+        menuButtonsArrangement.getHelp().setDefaultStyle();
+        menuButtonsArrangement.getExit().setDefaultStyle();
+        menuButtonsArrangement.getHighscores().setDefaultStyle();
+
+        if (gameDisplay.getIsShowing()){
+            gameDisplay.animationEffect();
+        }
+        if (helpDisplay.getIsShowing()){
+            helpDisplay.animationEffect();
+        }
+        if (highscoresDisplay.getIsShowing()){
+            highscoresDisplay.animationEffect();
+        }
+        if(settingsDisplay.getIsShowing()){
+            settingsDisplay.animationEffect();
+            settings.setHiddenStyle();
+        }
+        if(!easyScoreDisplay.getIsShowing()){
+            easyScoreDisplay.animationEffect();
+        }
+        if(mediumScoreDisplay.getIsShowing()){
+            mediumScoreDisplay.animationEffect();
+        }
+        if(hardScoreDisplay.getIsShowing()){
+            hardScoreDisplay.animationEffect();
+        }
+        highscores.highScoreButtonArrangement.getMedium().setDefaultStyle();
+        highscores.highScoreButtonArrangement.getHard().setDefaultStyle();
+    }
+    private void mediumScoreButtonClick(){
+        menuButtonsArrangement.getPlay().setDefaultStyle();
+        menuButtonsArrangement.getSettings().setDefaultStyle();
+        menuButtonsArrangement.getHelp().setDefaultStyle();
+        menuButtonsArrangement.getExit().setDefaultStyle();
+        menuButtonsArrangement.getHighscores().setDefaultStyle();
+
+        if (gameDisplay.getIsShowing()){
+            gameDisplay.animationEffect();
+        }
+        if (helpDisplay.getIsShowing()){
+            helpDisplay.animationEffect();
+        }
+        if (highscoresDisplay.getIsShowing()){
+            highscoresDisplay.animationEffect();
+        }
+        if(settingsDisplay.getIsShowing()){
+            settingsDisplay.animationEffect();
+            settings.setHiddenStyle();
+        }
+        if(easyScoreDisplay.getIsShowing()){
+            easyScoreDisplay.animationEffect();
+        }
+        if(!mediumScoreDisplay.getIsShowing()){
+            mediumScoreDisplay.animationEffect();
+        }
+        if(hardScoreDisplay.getIsShowing()){
+            hardScoreDisplay.animationEffect();
+        }
+        highscores.highScoreButtonArrangement.getEasy().setDefaultStyle();
+        highscores.highScoreButtonArrangement.getHard().setDefaultStyle();
+
+    }
+    private void hardScoreButtonClick(){
+        menuButtonsArrangement.getPlay().setDefaultStyle();
+        menuButtonsArrangement.getSettings().setDefaultStyle();
+        menuButtonsArrangement.getHelp().setDefaultStyle();
+        menuButtonsArrangement.getExit().setDefaultStyle();
+        menuButtonsArrangement.getHighscores().setDefaultStyle();
+
+        if (gameDisplay.getIsShowing()){
+            gameDisplay.animationEffect();
+        }
+        if (helpDisplay.getIsShowing()){
+            helpDisplay.animationEffect();
+        }
+        if (highscoresDisplay.getIsShowing()){
+            highscoresDisplay.animationEffect();
+        }
+        if(settingsDisplay.getIsShowing()){
+            settingsDisplay.animationEffect();
+            settings.setHiddenStyle();
+        }
+        if(easyScoreDisplay.getIsShowing()){
+            easyScoreDisplay.animationEffect();
+        }
+        if(mediumScoreDisplay.getIsShowing()){
+            mediumScoreDisplay.animationEffect();
+        }
+        if(!hardScoreDisplay.getIsShowing()){
+            hardScoreDisplay.animationEffect();
+        }
+        highscores.highScoreButtonArrangement.getEasy().setDefaultStyle();
+        highscores.highScoreButtonArrangement.getMedium().setDefaultStyle();
+
     }
     private void exitButtonClicked() {
         menuButtonsArrangement.getPlay().setDefaultStyle();
@@ -203,6 +373,15 @@ public class MainMenu {
         if(settingsDisplay.getIsShowing()){
             settingsDisplay.animationEffect();
         }
+        if(easyScoreDisplay.getIsShowing()){
+            easyScoreDisplay.animationEffect();
+        }
+        if(mediumScoreDisplay.getIsShowing()){
+            mediumScoreDisplay.animationEffect();
+        }
+        if(hardScoreDisplay.getIsShowing()){
+            hardScoreDisplay.animationEffect();
+        }
         //mainDisplayStage.close();
         exitPopUp.showPopUp();
     }
@@ -211,7 +390,7 @@ public class MainMenu {
         gameDisplay = new GameDisplay(difficulty);
         SubScene gameDisplaySubScene = gameDisplay.getGameSubScene();
         gameDisplaySubScene.setLayoutX(WIDTH);
-       // gameDisplaySubScene.setOpacity(0.75);
+        // gameDisplaySubScene.setOpacity(0.75);
     }
 
     public SubScene getGameDisplaySubScene() {
@@ -226,12 +405,72 @@ public class MainMenu {
     public Subscenes getHighscoresDisplaySubScene(){
         return highscoresDisplay;
     }
+    public Subscenes getEasyScoreDisplay(){
+        return easyScoreDisplay;
+    }
+    public Subscenes getMediumScoreDisplay(){
+        return mediumScoreDisplay;
+    }
+    public Subscenes getHardScoreDisplay(){
+        return hardScoreDisplay;
+    }
     public SubScene getExitPopUp(){
         return exitPopUp.getSubScene();
     }
     public void setMainDisplayStage(Stage mainDisplayStage) {
         this.mainDisplayStage = mainDisplayStage;
     }
+
+
+    public class HighScoreControl{
+        private HighScoreButtonArrangement highScoreButtonArrangement;
+        private AnchorPane layoutHighscore;
+
+
+        public HighScoreControl(){
+            layoutHighscore = new AnchorPane();
+            highScoreButtonArrangement = new HighScoreButtonArrangement();
+            layoutHighscore.getChildren().add(highScoreButtonArrangement.getHighScoreButtonsArrangementLayout()); //vbox button add
+
+            highScoreButtonArrangement.setHighScoreButtonsArrangementLayout(35, 40);
+            setListenersHighscore();
+        }
+
+        private void setListenersHighscore(){
+            highScoreButtonArrangement.getEasy().setOnAction(e-> easyButtonClick());
+            highScoreButtonArrangement.getMedium().setOnAction(e->mediumButtonClick());
+            highScoreButtonArrangement.getHard().setOnAction(e-> hardButtonClick());
+        }
+
+        private void easyButtonClick(){
+            easyScoresButtonClicked();
+            highScoreButtonArrangement.setDefault();
+            menuButtonsArrangement.getHighscores().setMouseButtonReleasedStyle();
+            easyScore.setMenuButtonsArrangement(menuButtonsArrangement);
+            easyScore.updateScore();
+        }
+        private void mediumButtonClick(){
+            mediumScoreButtonClick();
+            highScoreButtonArrangement.setDefault();
+            menuButtonsArrangement.getHighscores().setMouseButtonReleasedStyle();
+            mediumScore.setMenuButtonsArrangement(menuButtonsArrangement);
+            mediumScore.updateScore();
+        }
+        private void hardButtonClick(){
+            hardScoreButtonClick();
+            highScoreButtonArrangement.setDefault();
+            menuButtonsArrangement.getHighscores().setMouseButtonReleasedStyle();
+            hardScore.setMenuButtonsArrangement(menuButtonsArrangement);
+            hardScore.updateScore();
+        }
+        public HighScoreButtonArrangement getHighScoreButtonArragement(){
+            return highScoreButtonArrangement;
+        }
+        public AnchorPane getLayoutHighscore(){
+            return layoutHighscore;
+        }
+    }
+
 
     private class ExitPopUp extends PopUpBox{
         private Label label;
@@ -240,10 +479,10 @@ public class MainMenu {
 
         private int height = 40;
         private int width = 100;
-        SimpleButton yes, no;
+        private SimpleButton yes, no;
 
         public  ExitPopUp(){
-            label = new Label("Do you wish to exit?");
+            label = new Label("Do you want to exit?");
             vbox = new VBox(40);
 
             addFont();
@@ -310,5 +549,15 @@ public class MainMenu {
 
         }
 
+    }
+
+    public HighScoreHandler getEasyScore(){
+        return easyScore;
+    }
+    public HighScoreHandler getMediumScore(){
+        return mediumScore;
+    }
+    public HighScoreHandler getHardScore(){
+        return hardScore;
     }
 }

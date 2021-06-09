@@ -1,5 +1,6 @@
 package game_test.game;
 
+import game_test.game.high_score.Write_object;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -7,6 +8,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.SubScene;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -22,6 +25,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.FileInputStream;
 import java.io.IOException;
+
 
 
 public class Board extends Thread implements AnimationEffect  {
@@ -43,14 +47,14 @@ public class Board extends Thread implements AnimationEffect  {
     private int dy [] = {0,0,1,-1,1,1,-1,-1};
 
     // will need to change this to anchor pane later
-    VBox vbox;
-    AnchorPane boardLayout;
-    HBox hbox;
+    private VBox vbox;
+    private AnchorPane boardLayout;
+    private HBox hbox;
 
 
     //labels for debugging
-    Label remains = new Label();
-    Label bombs = new Label();
+    private Label remains = new Label();
+    private Label bombs = new Label();
 
     //for the animation effect
     private boolean isShowing;
@@ -62,7 +66,7 @@ public class Board extends Thread implements AnimationEffect  {
     private GridPane grid;
 
     //for Music
-    Music music;
+    private Music music;
 
     //for Stopwatch stuff
     private Timeline timeline;
@@ -156,7 +160,7 @@ public class Board extends Thread implements AnimationEffect  {
         hbox = new HBox();
         setHBoxSpacing();
         hbox.getChildren().addAll(timeText, reset_btn);
-        vbox.getChildren().addAll(hbox,grid,remains,bombs);
+        vbox.getChildren().addAll(hbox,grid); //remains,bombs);
         isShowing = false;
         renewedBoard = true;
         vbox.setLayoutX(0);
@@ -169,11 +173,10 @@ public class Board extends Thread implements AnimationEffect  {
         vbox.setLayoutY(100);
     }
     private void setLayout(){
-        // need to change the reset button later ( will have to add a custom button)
         reset_btn = new SimpleButton("Reset", 100,40,25 );
         grid = new GridPane();
 
-        grid.setOpacity(.70);
+        grid.setOpacity(.75);
 
         reset_btn.setOnAction(e->resetTheBoard());
         addButtonsToBoard(grid);
@@ -185,7 +188,7 @@ public class Board extends Thread implements AnimationEffect  {
         hbox.getChildren().add(timeText);
         hbox.getChildren().add(reset_btn);
 
-        vbox.getChildren().addAll(hbox,grid,remains,bombs);
+        vbox.getChildren().addAll(hbox,grid); //,remains,bombs);
 
     }
 
@@ -416,22 +419,7 @@ public class Board extends Thread implements AnimationEffect  {
 
         isWon = true;
         animationEffect();
-        int currentScore = minutes * 60 + seconds;
-
-        HighScoreHandler highScoreHandler;
-        try {
-            highScoreHandler= new HighScoreHandler(getDifficuly(), currentScore);
-            if(highScoreHandler.isNewHighScore()){
-                messages.setLabel("Congratulations!!\n New High Score");
-            }
-            else {
-                messages.setLabel("Congratulations!!\n    You've Won");
-            }
-            messages.showPopUp();
-        }
-        catch (IOException e){
-            System.out.println("Error in saving highscore");
-        }
+        messages.showPopUp();           //show win popup box
 
         for (int i=0;i<row_size;i++){
             for (int j=0;j<col_size;j++){
@@ -530,44 +518,79 @@ public class Board extends Thread implements AnimationEffect  {
             System.out.print("\n");
         }
     }
-    private int getDifficuly(){
-        if (row_size == 10) return 0;
-        if (row_size == 12) return 1;
-        return 2;
-    }
 
     private class Messages extends PopUpBox{
         private Label label;
+        // private SubScene subScene;
+        int total_time,min,sec;
+        String timeStr;
+
+        TextField textField;
+        Text text,textName;
 
         private int height = 40;
         private int width = 100;
         private SimpleButton ok;
 
         public Messages(){
+            super(500,400);
             label = new Label();
+
+
             addFont();
             addButtons();
             setupStuff();
+
+            // temp
+            ok.setDisable(true);
         }
 
         private void setupStuff() {
-            getLayout().getChildren().addAll(label,ok);
-            label.setLayoutX(70);
+            text = new Text();
+
+            textName = new Text("Your Name: ");
+            textField = new TextField();
+            // thik korbo
+            textField.setOnKeyReleased(new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent keyEvent) {
+                    if(textField.getText().equals("")){
+                        ok.setDisable(true);
+                    }
+                    else{
+                        ok.setDisable(false);
+                    }
+                }
+            });
+
+            getLayout().getChildren().addAll(label,ok,textField,text,textName);
+            label.setText("Congratulations!\n   You've Won");
+            label.setLayoutX(80);
             label.setLayoutY(60);
             label.setAlignment(Pos.CENTER);
-            ok.setLayoutX(150);
-            ok.setLayoutY(110);
+            ok.setLayoutX(210);
+            ok.setLayoutY(250);
+
+            textName.setX(50);
+            textName.setY(210);
+            textName.setFont(Font.font(20));
+
+            textField.setLayoutX(170);
+            textField.setLayoutY(190);
+            textField.setFont(Font.font(15));
         }
 
-        public void setLabel(String text){
-            label.setText(text);
-        }
         private void addButtons() {
             ok = new SimpleButton("Ok",width,height,25);
             ok.setOnAction(e->okClicked());
         }
 
         private void okClicked() {
+            Write_object write = new Write_object(getFileName());       //serialization a score add korar jono
+            write.writeDetails(textField.getText(),total_time,timeStr);
+            textField.clear(); // clear text field after each input
+            MainMenu mainMenu = new MainMenu();
+            mainMenu.addHighscoresDisplaySubscene();
             hide();
             menuButtonsArrangement.getPlay().setDisable(false);
             menuButtonsArrangement.getSettings().setDisable(false);
@@ -577,30 +600,83 @@ public class Board extends Thread implements AnimationEffect  {
 
             setBoardButtonsDisable(false);
             reset_btn.setDisable(false);
+
         }
 
         public void showPopUp(){
+            timeConvert();
             show();
+
+            ok.setDisable(true);
             menuButtonsArrangement.getPlay().setDisable(true);
             menuButtonsArrangement.getSettings().setDisable(true);
             menuButtonsArrangement.getHighscores().setDisable(true);
             menuButtonsArrangement.getExit().setDisable(true);
             menuButtonsArrangement.getHelp().setDisable(true);
 
+            //time dhekanor jonno eta ekhane deoa
+            String timeName = "Your time : "+ Integer.toString(min) +" minutes "+Integer.toString(sec)+" seconds";
+            total_time = (min * 60) + sec;
+            text.setText(timeName);
+            text.setX(50);
+            text.setY(160);
+            text.setFont(Font.font(20));
+
             setBoardButtonsDisable(true);
             reset_btn.setDisable(true);
+
 
         }
         private void addFont() {
             try{
                 label.setFont(Font.loadFont(new FileInputStream("src/game_test/game/resources/fonts/ghostclan.ttf"),
-                        25.0));
-
+                        35.0));
             }
             catch(Exception e){
                 System.out.println("FONT NOT FOUND");
                 label.setFont(Font.font("Tahoma", 25.0));
             }
+        }
+        private void timeConvert(){
+            timeStr = timeText.getText();
+            int timeInt[] = new int[5];
+//            for(int i : timeInt){
+//                timeInt[i] = timeStr.charAt(i);
+//            }
+            for(int i=0;i<=4;i++){
+                timeInt[i] = charConvert(timeStr.charAt(i));
+            }
+
+            min = timeInt[0] *10 + timeInt[1];
+            sec = timeInt[3] *10 + timeInt[4];
+
+        }
+        private int charConvert(char character){
+            if(character=='0')
+                return 0;
+            else if(character == '1')
+                return 1;
+            else if(character == '2')
+                return 2;
+            else if(character == '3')
+                return 3;
+            else if(character == '4')
+                return 4;
+            else if(character == '5')
+                return 5;
+            else if(character == '6')
+                return 6;
+            else if(character == '7')
+                return 7;
+            else if(character == '8')
+                return 8;
+            else
+                return 9;
+        }
+        @Override
+        public void show(){
+            subScene.setLayoutX(230);
+            subScene.setLayoutY(160);
         }
     }
 
@@ -618,5 +694,14 @@ public class Board extends Thread implements AnimationEffect  {
                 grid_buttons[i][j].setDisable(val);
             }
         }
+    }
+
+    private String getFileName(){
+        if(row_size==10)
+            return "src/game_test/game/high_score/high_score_file/Easy.txt";
+        else if(row_size == 12)
+            return "src/game_test/game/high_score/high_score_file/Medium.txt";
+        else
+            return "src/game_test/game/high_score/high_score_file/Hard.txt";
     }
 }

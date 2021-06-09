@@ -23,6 +23,7 @@ public class SettingsSubsceneButtons extends MenuButton{
         setListeners();
     }
 
+    // polymorphism (method overloading)
     public SettingsSubsceneButtons(String normal, String pressed, int width, int height){
         super(normal,pressed);
         setPrefSize(width,height);
@@ -31,6 +32,7 @@ public class SettingsSubsceneButtons extends MenuButton{
         setButtonFont();
         setListeners();
     }
+
     private void setButtonFont(){
         try{
             setFont(Font.loadFont(new FileInputStream("src/game_test/game/resources/fonts/ThaleahFat.ttf"),

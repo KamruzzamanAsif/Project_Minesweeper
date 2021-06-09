@@ -78,7 +78,7 @@ public class SettingsSubScene {
         addHBox();
         addVBox();
         easyDifficultyButton.setMouseButtonPressedStyle();
-        onButton.setMouseButtonPressedStyle();
+        offButton.setMouseButtonPressedStyle();
         setListeners();
         temp_difficulty = 0;
         difficulty = 0;
@@ -189,6 +189,15 @@ public class SettingsSubScene {
 
     private void saveButtonPressed() {
         if (save.getIsPressed()) return;
+
+        if (difficulty == temp_difficulty){
+            save.setIsPressed(true);
+            save.setMouseButtonPressedStyle();
+
+            music = new Music();
+            music.MusicPlay(musicPlay);
+            return;
+        }
 
         difficulty = temp_difficulty;
 

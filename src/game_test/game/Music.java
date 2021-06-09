@@ -9,7 +9,7 @@ public class Music {
     AudioInputStream audioStream;
     Clip clip;
 
-    static boolean shouldMusicPlay = true;
+    static boolean shouldMusicPlay = false;
 
     public void MusicPlay(boolean musicPlay){
         shouldMusicPlay = musicPlay;

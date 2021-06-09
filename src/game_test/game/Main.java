@@ -13,7 +13,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         MainDisplay mainDisplay = new MainDisplay();
-        primaryStage = MainDisplay.getMainDisplayStage();
+        primaryStage = mainDisplay.getMainDisplayStage();
         primaryStage.show();
     }
 }

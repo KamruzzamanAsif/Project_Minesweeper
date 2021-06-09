@@ -26,7 +26,7 @@ public class MainDisplay {
         mainDisplayScene = new Scene(mainDisplayLayout, WIDTH, HEIGHT);
         mainDisplayStage = new Stage();
         mainDisplayStage.setScene(mainDisplayScene);
-       // mainDisplayStage.initStyle(StageStyle.TRANSPARENT);
+        mainDisplayStage.initStyle(StageStyle.TRANSPARENT);
         mainDisplayStage.setResizable(false);
         mainDisplayScene.setFill(Color.TRANSPARENT);
         //css diya kono karone thik moto kaam kore na
@@ -37,13 +37,22 @@ public class MainDisplay {
         addSubScenes();
     }
 
-    private static void addSubScenes(){
+    public  void addSubScenes(){
         addGameDisplay();
         addSettingsDisplay();
         addHelpDisplay();
         addHighscoresDisplay();
         addExitPopUp();
         addMessagesPopUp();
+        addConfirmationMessagesPopUp();
+    }
+
+    private void addConfirmationMessagesPopUp() {
+        mainDisplayLayout.getChildren().addAll(
+                mainMenu.getEasyScore().getConfirmationPopUpSubScene(),
+                mainMenu.getMediumScore().getConfirmationPopUpSubScene(),
+                mainMenu.getHardScore().getConfirmationPopUpSubScene()
+        );
     }
 
     private static void addExitPopUp() {
@@ -53,7 +62,7 @@ public class MainDisplay {
         mainDisplayLayout.getChildren().add(mainMenu.getBoard().getMessagesPopUp());
     }
     private static void addHighscoresDisplay() {
-        mainDisplayLayout.getChildren().add(mainMenu.getHighscoresDisplaySubScene());
+        mainDisplayLayout.getChildren().addAll(mainMenu.getHighscoresDisplaySubScene(),mainMenu.getEasyScoreDisplay(),mainMenu.getMediumScoreDisplay(),mainMenu.getHardScoreDisplay());
     }
 
     private static void addSettingsDisplay() {
